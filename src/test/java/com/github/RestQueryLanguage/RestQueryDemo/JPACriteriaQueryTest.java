@@ -53,6 +53,7 @@ public class JPACriteriaQueryTest {
         userDAO.save(userTom);
     }
 
+
     @Test
     public void firstAndLastNameEquals() {
         List<SearchCriteria> params = new ArrayList<>();
