@@ -1,4 +1,4 @@
-package com.github.RestQueryLanguage.RestQueryDemo.persistence.dao;
+package com.github.RestQueryLanguage.RestQueryDemo.persistence.dao.spec;
 
 import com.github.RestQueryLanguage.RestQueryDemo.persistence.model.User;
 import com.github.RestQueryLanguage.RestQueryDemo.web.utils.SearchCriteria;

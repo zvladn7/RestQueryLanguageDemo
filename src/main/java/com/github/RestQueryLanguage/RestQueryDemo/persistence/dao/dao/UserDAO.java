@@ -1,4 +1,4 @@
-package com.github.RestQueryLanguage.RestQueryDemo.persistence.dao;
+package com.github.RestQueryLanguage.RestQueryDemo.persistence.dao.dao;
 
 
 import com.github.RestQueryLanguage.RestQueryDemo.web.utils.SearchCriteria;
@@ -37,8 +37,7 @@ public class UserDAO implements IUserDAO {
         query.where(predicate);
 
         TypedQuery<User> query1 = entityManager.createQuery(query);
-        List<User> resultList = query1.getResultList();
-        return resultList;
+        return query1.getResultList();
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.github.RestQueryLanguage.RestQueryDemo;
 
-import com.github.RestQueryLanguage.RestQueryDemo.persistence.dao.UserRepository;
-import com.github.RestQueryLanguage.RestQueryDemo.persistence.dao.UserSpecification;
+import com.github.RestQueryLanguage.RestQueryDemo.persistence.dao.repo.UserRepository;
+import com.github.RestQueryLanguage.RestQueryDemo.persistence.dao.spec.UserSpecification;
 import com.github.RestQueryLanguage.RestQueryDemo.persistence.model.User;
 import com.github.RestQueryLanguage.RestQueryDemo.web.utils.SearchCriteria;
 import org.junit.Before;

@@ -1,11 +1,15 @@
 package com.github.RestQueryLanguage.RestQueryDemo.web.controller;
 
 
-import com.github.RestQueryLanguage.RestQueryDemo.persistence.dao.IUserDAO;
-import com.github.RestQueryLanguage.RestQueryDemo.persistence.dao.UserRepository;
-import com.github.RestQueryLanguage.RestQueryDemo.persistence.dao.UserSpecificationBuilder;
+import com.github.RestQueryLanguage.RestQueryDemo.persistence.dao.MyUserPredicatesBuilder;
+import com.github.RestQueryLanguage.RestQueryDemo.persistence.dao.dao.IUserDAO;
+import com.github.RestQueryLanguage.RestQueryDemo.persistence.dao.repo.MyUserRepository;
+import com.github.RestQueryLanguage.RestQueryDemo.persistence.dao.repo.UserRepository;
+import com.github.RestQueryLanguage.RestQueryDemo.persistence.dao.spec.UserSpecificationBuilder;
+import com.github.RestQueryLanguage.RestQueryDemo.persistence.model.MyUser;
 import com.github.RestQueryLanguage.RestQueryDemo.persistence.model.User;
 import com.github.RestQueryLanguage.RestQueryDemo.web.utils.SearchCriteria;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +32,9 @@ public class UserController {
     @Autowired
     private UserRepository userRepo;
 
+    @Autowired
+    private MyUserRepository myUserRepo;
+
     @GetMapping("/users/v1")
     public List<User> findAll(@RequestParam(value = "search", required = false) String search) {
         List<SearchCriteria> params = new ArrayList<>();
@@ -48,7 +55,6 @@ public class UserController {
     @GetMapping("/users/v2")
     public List<User> findAllWithSpec(@RequestParam(value = "search", required = false) String search) {
         UserSpecificationBuilder builder = new UserSpecificationBuilder();
-        List<SearchCriteria> params = new ArrayList<>();
         if (search != null) {
             Matcher matcher = getMatcher(search);
             while (matcher.find()) {
@@ -65,7 +71,25 @@ public class UserController {
         return userRepo.findAll(specification);
     }
 
-    private static final Matcher getMatcher(String search) {
+    @GetMapping("/users/v3")
+    public List<MyUser> findAllWithQuerydsl(@RequestParam(value = "search", required = false) String search) {
+        MyUserPredicatesBuilder builder = new MyUserPredicatesBuilder();
+        if (search != null) {
+            Matcher matcher = getMatcher(search);
+            while (matcher.find()) {
+                builder.with(
+                        matcher.group(1),
+                        matcher.group(2),
+                        matcher.group(3)
+                );
+            }
+        }
+
+        BooleanExpression booleanExpression = builder.build();
+        return myUserRepo.findAll(booleanExpression);
+    }
+
+    private static Matcher getMatcher(String search) {
         Pattern pattern = Pattern.compile(URL_PARAMETERS_REGEX_MATCHER_STRING);
         return pattern.matcher(search + ",");
     }

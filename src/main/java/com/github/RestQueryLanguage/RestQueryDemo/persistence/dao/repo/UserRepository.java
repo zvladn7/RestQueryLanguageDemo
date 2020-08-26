@@ -1,4 +1,4 @@
-package com.github.RestQueryLanguage.RestQueryDemo.persistence.dao;
+package com.github.RestQueryLanguage.RestQueryDemo.persistence.dao.repo;
 
 import com.github.RestQueryLanguage.RestQueryDemo.persistence.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,7 +1,6 @@
-package com.github.RestQueryLanguage.RestQueryDemo.persistence.dao;
+package com.github.RestQueryLanguage.RestQueryDemo.persistence.dao.spec;
 
 import com.github.RestQueryLanguage.RestQueryDemo.persistence.model.User;
-import com.github.RestQueryLanguage.RestQueryDemo.web.utils.SearchCriteria;
 import com.github.RestQueryLanguage.RestQueryDemo.web.utils.SpecificationSearchCriteria;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -42,7 +41,6 @@ public class UserSpecificationBuilder {
                 .collect(Collectors.toList());
 
         Specification<User> result = specs.get(0);
-
         for (int i = 1; i < params.size(); ++i) {
             result = params.get(i)
                     .isOrPredicate()

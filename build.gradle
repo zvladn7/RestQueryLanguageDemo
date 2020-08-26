@@ -12,12 +12,24 @@ repositories {
 	mavenCentral()
 }
 
+def queryDslVersion = '4.2.1'
+
 dependencies {
 	runtimeOnly 'org.postgresql:postgresql'
 
+	//query dsl
+	// https://mvnrepository.com/artifact/com.querydsl/querydsl-jpa
+	compile group: 'com.querydsl', name: 'querydsl-jpa', version: '4.3.1'
+	// https://mvnrepository.com/artifact/com.querydsl/querydsl-apt
+	compile group: 'com.querydsl', name: 'querydsl-apt', version: '4.3.1'
+//	annotationProcessor("com.querydsl:querydsl-apt:${queryDslVersion}:jpa")
+	annotationProcessor group: 'com.querydsl', name: 'querydsl-apt', classifier: 'jpa'
+	annotationProcessor "org.springframework.boot:spring-boot-starter-data-jpa:"
+
+
 	compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.12'
 	annotationProcessor 'org.projectlombok:lombok'
-	
+
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
