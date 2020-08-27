@@ -2,25 +2,22 @@ package com.github.RestQueryLanguage.RestQueryDemo.web.utils;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-@EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SpecificationSearchCriteria extends SearchCriteria {
+public class SpecificationSearchCriteria {
+
+    //used to hold field name - for example: firstName, age, ... etc
+    private String key;
+
+    //used to hold the operation - for example: equality, less than, ... etc
+    private SearchOperation operation;
+
+    //used to hold the field value - for example: John, 25, .. etc
+    private Object value;
 
     private boolean orPredicate;
-
-    public SpecificationSearchCriteria(
-            final String key,
-            final String operation,
-            final Object value,
-            final boolean orPredicate
-    ) {
-        super(key, operation, value);
-        this.orPredicate = orPredicate;
-    }
 
 }

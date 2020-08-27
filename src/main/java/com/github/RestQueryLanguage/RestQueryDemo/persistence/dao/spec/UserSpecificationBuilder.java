@@ -1,6 +1,7 @@
 package com.github.RestQueryLanguage.RestQueryDemo.persistence.dao.spec;
 
 import com.github.RestQueryLanguage.RestQueryDemo.persistence.model.User;
+import com.github.RestQueryLanguage.RestQueryDemo.web.utils.SearchOperation;
 import com.github.RestQueryLanguage.RestQueryDemo.web.utils.SpecificationSearchCriteria;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,7 +28,42 @@ public class UserSpecificationBuilder {
             final Object value,
             final boolean orPredicate
     ) {
-        params.add(new SpecificationSearchCriteria(key, operation, value, orPredicate));
+        SearchOperation op = SearchOperation.getSimpleOperation(operation.charAt(0));
+        params.add(new SpecificationSearchCriteria(key, op, value, orPredicate));
+        return this;
+    }
+
+    public UserSpecificationBuilder with(
+            final String key,
+            final String operation,
+            final Object value,
+            final boolean orPredicate,
+            final String prefix,
+            final String suffix
+    ) {
+        SearchOperation op = SearchOperation.getSimpleOperation(operation.charAt(0));
+        if (op != null) {
+            if (op == SearchOperation.EQUALITY) {
+                final boolean startWithAsterisk = prefix != null && prefix.contains(SearchOperation.ZERO_OR_MORE_REGEX);
+                final boolean endWithAsterisk = suffix != null && suffix.contains(SearchOperation.ZERO_OR_MORE_REGEX);
+
+                if (startWithAsterisk && endWithAsterisk) {
+                    op = SearchOperation.CONTAINS;
+                } else if (startWithAsterisk) {
+                    op = SearchOperation.ENDS_WITH;
+                } else {
+                    op = SearchOperation.STARTS_WITH;
+                }
+            }
+
+            params.add(new SpecificationSearchCriteria(key, op, value, orPredicate));
+        }
+
+        return this;
+    }
+
+    public UserSpecificationBuilder with(SpecificationSearchCriteria criteria) {
+        params.add(criteria);
         return this;
     }
 

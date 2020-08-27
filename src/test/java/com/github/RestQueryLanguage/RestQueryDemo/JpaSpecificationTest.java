@@ -3,7 +3,8 @@ package com.github.RestQueryLanguage.RestQueryDemo;
 import com.github.RestQueryLanguage.RestQueryDemo.persistence.dao.repo.UserRepository;
 import com.github.RestQueryLanguage.RestQueryDemo.persistence.dao.spec.UserSpecification;
 import com.github.RestQueryLanguage.RestQueryDemo.persistence.model.User;
-import com.github.RestQueryLanguage.RestQueryDemo.web.utils.SearchCriteria;
+import com.github.RestQueryLanguage.RestQueryDemo.web.utils.SearchOperation;
+import com.github.RestQueryLanguage.RestQueryDemo.web.utils.SpecificationSearchCriteria;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -54,7 +55,8 @@ public class JpaSpecificationTest {
     @Test
     public void lastNameEquals() {
         UserSpecification specification = new UserSpecification(
-                new SearchCriteria("lastName", ":", "Black"));
+                new SpecificationSearchCriteria(
+                        "lastName", SearchOperation.EQUALITY, "Black", false));
 
         List<User> results = userRepo.findAll(specification);
 
@@ -63,11 +65,24 @@ public class JpaSpecificationTest {
     }
 
     @Test
+    public void firstNameNotEquals() {
+        UserSpecification specification = new UserSpecification(
+                new SpecificationSearchCriteria("firstName", SearchOperation.NEGATION, "Tom", false));
+
+        List<User> results = userRepo.findAll(specification);
+
+        assertTrue(results.contains(userJohn));
+        assertFalse(results.contains(userTom));
+    }
+
+    @Test
     public void firstAndLastNameEquals() {
         UserSpecification spec1 = new UserSpecification(
-                new SearchCriteria("firstName", ":", "Tom"));
+                new SpecificationSearchCriteria(
+                        "firstName", SearchOperation.EQUALITY, "Tom", false));
         UserSpecification spec2 = new UserSpecification(
-                new SearchCriteria("lastName", ":", "Black"));
+                new SpecificationSearchCriteria(
+                        "lastName", SearchOperation.EQUALITY, "Black", false));
 
         List<User> results = userRepo.findAll(Specification.where(spec1).and(spec2));
 
@@ -78,9 +93,10 @@ public class JpaSpecificationTest {
     @Test
     public void lastNameEqualsAndAgeLess() {
         UserSpecification spec1 = new UserSpecification(
-                new SearchCriteria("firstName", ":", "John"));
+                new SpecificationSearchCriteria(
+                        "firstName", SearchOperation.EQUALITY, "John", false));
         UserSpecification spec2 = new UserSpecification(
-                new SearchCriteria("age", "<", 23));
+                new SpecificationSearchCriteria("age", SearchOperation.LESS_THAN, 23, false));
 
         List<User> results = userRepo.findAll(Specification.where(spec1).and(spec2));
 
@@ -91,9 +107,11 @@ public class JpaSpecificationTest {
     @Test
     public void emptyResult() {
         UserSpecification spec1 = new UserSpecification(
-                new SearchCriteria("firstName", ":", "Anton"));
+                new SpecificationSearchCriteria(
+                        "firstName", SearchOperation.EQUALITY, "Anton", false));
         UserSpecification spec2 = new UserSpecification(
-                new SearchCriteria("lastName", ":", "Black"));
+                new SpecificationSearchCriteria(
+                        "lastName", SearchOperation.EQUALITY, "Black", false));
 
         List<User> results = userRepo.findAll(Specification.where(spec1).and(spec2));
 
@@ -102,14 +120,52 @@ public class JpaSpecificationTest {
     }
 
     @Test
-    public void givenOnlyPartOfFirstName() {
+    public void startWithFirstName() {
         UserSpecification spec = new UserSpecification(
-                new SearchCriteria("firstName", ":", "To"));
+                new SpecificationSearchCriteria("firstName", SearchOperation.STARTS_WITH, "To", false));
 
         List<User> results = userRepo.findAll(spec);
 
         assertTrue(results.contains(userTom));
         assertFalse(results.contains(userJohn));
     }
+
+    @Test
+    public void endWithFirstName() {
+        UserSpecification specification = new UserSpecification(
+                new SpecificationSearchCriteria("firstName", SearchOperation.ENDS_WITH, "om", false));
+
+        List<User> results = userRepo.findAll(specification);
+
+        assertTrue(results.contains(userTom));
+        assertFalse(results.contains(userJohn));
+    }
+
+    @Test
+    public void containsInFirstName() {
+        UserSpecification specification = new UserSpecification(
+                new SpecificationSearchCriteria("firstName", SearchOperation.CONTAINS, "o", false));
+
+        List<User> results = userRepo.findAll(specification);
+
+        assertTrue(results.contains(userTom));
+        assertTrue(results.contains(userJohn));
+    }
+
+    @Test
+    public void ageBetweenValues() {
+        UserSpecification spec1 = new UserSpecification(
+                new SpecificationSearchCriteria("age", SearchOperation.LESS_THAN, "30", false));
+
+        UserSpecification spec2 = new UserSpecification(
+                new SpecificationSearchCriteria("age", SearchOperation.GREATER_THAN, "21", false));
+
+        List<User> results = userRepo.findAll(Specification.where(spec1).and(spec2));
+
+        assertTrue(results.contains(userTom));
+        assertFalse(results.contains(userJohn));
+
+    }
+
 
 }
