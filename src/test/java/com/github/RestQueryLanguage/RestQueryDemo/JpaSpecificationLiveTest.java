@@ -57,7 +57,7 @@ public class JpaSpecificationLiveTest {
 
     private static final String BASIC_URL_FOR_TEST_START = "http://localhost:";
     private static final String BASIC_URL_FOR_TEST_END = "/users/v4?search=";
-
+    private static final String BASIC_URL_FOR_TEST_END_WITH_OR = "/users/v5?search=";
 
     @Test
     public void firstAndLastNameEquals() {
@@ -157,6 +157,19 @@ public class JpaSpecificationLiveTest {
         assertTrue(users.contains(userJohn));
     }
 
+    @Test
+    public void firstNameWithOr() {
+        List objects = restTemplate.getForObject(
+                getUrlWithFunc() + "firstName=Tom,'firstName=John",
+                List.class
+        );
+
+        assert objects != null;
+        List<User> users = convertList(objects);
+
+        assertTrue(users.contains(userTom));
+        assertTrue(users.contains(userJohn));
+    }
 
     private static List<User> convertList(final List results) {
         List<User> users = new ArrayList<>();
@@ -186,5 +199,9 @@ public class JpaSpecificationLiveTest {
 
     private String getUrl() {
         return BASIC_URL_FOR_TEST_START + port + BASIC_URL_FOR_TEST_END;
+    }
+
+    private String getUrlWithFunc() {
+        return BASIC_URL_FOR_TEST_START + port + BASIC_URL_FOR_TEST_END_WITH_OR;
     }
 }

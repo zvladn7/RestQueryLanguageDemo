@@ -20,4 +20,11 @@ public class SpecificationSearchCriteria {
 
     private boolean orPredicate;
 
+    public SpecificationSearchCriteria(String key, SearchOperation operation, Object value, String orPredicate) {
+        this.orPredicate = orPredicate != null && orPredicate.equals(SearchOperation.OR_PREDICATE_FLAG);
+
+        this.key = key;
+        this.operation = operation;
+        this.value = value;
+    }
 }

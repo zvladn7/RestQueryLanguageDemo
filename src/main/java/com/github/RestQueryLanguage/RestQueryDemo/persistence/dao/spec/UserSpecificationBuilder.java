@@ -34,10 +34,10 @@ public class UserSpecificationBuilder {
     }
 
     public UserSpecificationBuilder with(
+            final String orPredicate,
             final String key,
             final String operation,
             final Object value,
-            final boolean orPredicate,
             final String prefix,
             final String suffix
     ) {

@@ -2,6 +2,7 @@ package com.github.RestQueryLanguage.RestQueryDemo;
 
 import com.github.RestQueryLanguage.RestQueryDemo.persistence.dao.repo.UserRepository;
 import com.github.RestQueryLanguage.RestQueryDemo.persistence.dao.spec.UserSpecification;
+import com.github.RestQueryLanguage.RestQueryDemo.persistence.dao.spec.UserSpecificationBuilder;
 import com.github.RestQueryLanguage.RestQueryDemo.persistence.model.User;
 import com.github.RestQueryLanguage.RestQueryDemo.web.utils.SearchOperation;
 import com.github.RestQueryLanguage.RestQueryDemo.web.utils.SpecificationSearchCriteria;
@@ -167,5 +168,24 @@ public class JpaSpecificationTest {
 
     }
 
+    @Test
+    public void fistNameEqualsWithOr() {
+
+        SpecificationSearchCriteria spec1 =
+                new SpecificationSearchCriteria("firstName", SearchOperation.EQUALITY, "Tom", false);
+        SpecificationSearchCriteria spec2 =
+                new SpecificationSearchCriteria("firstName", SearchOperation.EQUALITY, "John", "'");
+
+        UserSpecificationBuilder builder = new UserSpecificationBuilder()
+                .with(spec1)
+                .with(spec2);
+
+        Specification<User> userSpecification = builder.build();
+
+        List<User> results = userRepo.findAll(userSpecification);
+
+        assertTrue(results.contains(userTom));
+        assertTrue(results.contains(userJohn));
+    }
 
 }

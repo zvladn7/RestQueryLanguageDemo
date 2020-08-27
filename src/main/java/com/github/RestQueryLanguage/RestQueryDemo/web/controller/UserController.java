@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -95,14 +96,14 @@ public class UserController {
     public List<User> findAllSpecWithMoreOps(@RequestParam(value = "search", required = false) String search) {
         UserSpecificationBuilder builder = new UserSpecificationBuilder();
         String operationSetExper = Joiner.on("|").join(SearchOperation.SIMPLE_OPERATION_SET);
-        Matcher matcher = getMatcherV2(search, operationSetExper);
+        Matcher matcher = getMatcherV2(search, operationSetExper, UserController::getRegExp);
 
         while (matcher.find()) {
             builder.with(
+                    null,
                     matcher.group(1),
                     matcher.group(2),
                     matcher.group(4),
-                    false,
                     matcher.group(3),
                     matcher.group(5)
             );
@@ -112,13 +113,42 @@ public class UserController {
         return userRepo.findAll(specification);
     }
 
-    private static Matcher getMatcherV2(final String search, final String operationSetExper) {
-        Pattern pattern = Pattern.compile(getRegExp(operationSetExper));
+    @GetMapping("/users/v5")
+    public List<User> findAllSpecWithOrOperation(@RequestParam(value = "search", required = false) String search) {
+        UserSpecificationBuilder builder = new UserSpecificationBuilder();
+        String operationSetExper = Joiner.on("|").join(SearchOperation.SIMPLE_OPERATION_SET);
+        Matcher matcher = getMatcherV2(search, operationSetExper, UserController::getRegExpWithOR);
+
+        while (matcher.find()) {
+            builder.with(
+                    matcher.group(1),
+                    matcher.group(2),
+                    matcher.group(3),
+                    matcher.group(5),
+                    matcher.group(4),
+                    matcher.group(6)
+            );
+        }
+
+        Specification<User> specification = builder.build();
+        return userRepo.findAll(specification);
+    }
+
+    private static Matcher getMatcherV2(
+            final String search,
+            final String operationSetExper,
+            final Function<String, String> regexGet
+    ) {
+        Pattern pattern = Pattern.compile(regexGet.apply(operationSetExper));
         return pattern.matcher(search + ",");
     }
 
     private static String getRegExp(final String operationSetExper) {
         return "(\\w+?)(" + operationSetExper + ")(\\p{Punct}?)(\\w+?)(\\p{Punct}?),";
+    }
+
+    private static String getRegExpWithOR(final String operationSetExper) {
+        return "(\\p{Punct}?)(\\w+?)(" + operationSetExper + ")(\\p{Punct}?)(\\w+?)(\\p{Punct}?),";
     }
 
     private static Matcher getMatcher(final String search) {
