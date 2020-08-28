@@ -27,4 +27,16 @@ public class SpecificationSearchCriteria {
         this.operation = operation;
         this.value = value;
     }
+
+    public SpecificationSearchCriteria(
+            final String key,
+            final String operation,
+            final String prefix,
+            final String value,
+            final String suffix
+    ) {
+        this.key = key;
+        this.operation = SearchOperation.determineOperation(operation, prefix, suffix);
+        this.value = value;
+    }
 }

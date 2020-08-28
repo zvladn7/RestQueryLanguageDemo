@@ -1,13 +1,16 @@
 package com.github.RestQueryLanguage.RestQueryDemo.web.controller;
 
 
+import com.github.RestQueryLanguage.RestQueryDemo.persistence.dao.GenericSpecificationsBuilder;
 import com.github.RestQueryLanguage.RestQueryDemo.persistence.dao.MyUserPredicatesBuilder;
 import com.github.RestQueryLanguage.RestQueryDemo.persistence.dao.dao.IUserDAO;
 import com.github.RestQueryLanguage.RestQueryDemo.persistence.dao.repo.MyUserRepository;
 import com.github.RestQueryLanguage.RestQueryDemo.persistence.dao.repo.UserRepository;
+import com.github.RestQueryLanguage.RestQueryDemo.persistence.dao.spec.UserSpecification;
 import com.github.RestQueryLanguage.RestQueryDemo.persistence.dao.spec.UserSpecificationBuilder;
 import com.github.RestQueryLanguage.RestQueryDemo.persistence.model.MyUser;
 import com.github.RestQueryLanguage.RestQueryDemo.persistence.model.User;
+import com.github.RestQueryLanguage.RestQueryDemo.web.utils.CriteriaParser;
 import com.github.RestQueryLanguage.RestQueryDemo.web.utils.SearchCriteria;
 import com.github.RestQueryLanguage.RestQueryDemo.web.utils.SearchOperation;
 import com.google.common.base.Joiner;
@@ -132,6 +135,15 @@ public class UserController {
 
         Specification<User> specification = builder.build();
         return userRepo.findAll(specification);
+    }
+
+    @GetMapping("users/spec/parser")
+    public List<User> findAllByPredicateByParser(@RequestParam(value = "search", required = false) String search) {
+        CriteriaParser parser = new CriteriaParser();
+        GenericSpecificationsBuilder<User> builder = new GenericSpecificationsBuilder<>();
+        Specification<User> userSpecification = builder.build(parser.parse(search), UserSpecification::new);
+
+        return userRepo.findAll(userSpecification);
     }
 
     private static Matcher getMatcherV2(

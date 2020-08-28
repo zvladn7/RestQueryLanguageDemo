@@ -43,19 +43,7 @@ public class UserSpecificationBuilder {
     ) {
         SearchOperation op = SearchOperation.getSimpleOperation(operation.charAt(0));
         if (op != null) {
-            if (op == SearchOperation.EQUALITY) {
-                final boolean startWithAsterisk = prefix != null && prefix.contains(SearchOperation.ZERO_OR_MORE_REGEX);
-                final boolean endWithAsterisk = suffix != null && suffix.contains(SearchOperation.ZERO_OR_MORE_REGEX);
-
-                if (startWithAsterisk && endWithAsterisk) {
-                    op = SearchOperation.CONTAINS;
-                } else if (startWithAsterisk) {
-                    op = SearchOperation.ENDS_WITH;
-                } else {
-                    op = SearchOperation.STARTS_WITH;
-                }
-            }
-
+            op = SearchOperation.determineOperation(operation, prefix, suffix);
             params.add(new SpecificationSearchCriteria(key, op, value, orPredicate));
         }
 

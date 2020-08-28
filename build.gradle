@@ -26,6 +26,7 @@ dependencies {
 	annotationProcessor group: 'com.querydsl', name: 'querydsl-apt', classifier: 'jpa'
 	annotationProcessor "org.springframework.boot:spring-boot-starter-data-jpa:"
 
+	implementation "cz.jirutka.rsql:rsql-parser"
 
 	compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.12'
 	annotationProcessor 'org.projectlombok:lombok'
