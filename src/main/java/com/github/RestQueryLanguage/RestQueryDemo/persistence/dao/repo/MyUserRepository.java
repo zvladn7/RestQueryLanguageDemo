@@ -21,7 +21,7 @@ public interface MyUserRepository extends JpaRepository<MyUser, Long>,
     default void customize(QuerydslBindings bindings, QMyUser root) {
         bindings.bind(String.class)
                 .first((SingleValueBinding<StringPath, String>) StringExpression::containsIgnoreCase);
-        bindings.excluding(root.email);
+//        bindings.excluding(root.email);
     }
 
     List<MyUser> findAll(Predicate predicate);

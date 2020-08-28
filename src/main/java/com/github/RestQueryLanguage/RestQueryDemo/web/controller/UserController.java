@@ -14,9 +14,11 @@ import com.github.RestQueryLanguage.RestQueryDemo.web.utils.CriteriaParser;
 import com.github.RestQueryLanguage.RestQueryDemo.web.utils.SearchCriteria;
 import com.github.RestQueryLanguage.RestQueryDemo.web.utils.SearchOperation;
 import com.google.common.base.Joiner;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -144,6 +146,11 @@ public class UserController {
         Specification<User> userSpecification = builder.build(parser.parse(search), UserSpecification::new);
 
         return userRepo.findAll(userSpecification);
+    }
+
+    @GetMapping("/users/v6")
+    public List<MyUser> findAllByWebQuerydsl(@QuerydslPredicate(root = MyUser.class) Predicate predicate) {
+        return myUserRepo.findAll(predicate);
     }
 
     private static Matcher getMatcherV2(
